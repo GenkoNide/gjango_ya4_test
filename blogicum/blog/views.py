@@ -37,3 +37,26 @@ def category_posts(request, category_slug):
     context = {'category': category,
                'post_list': post_list}
     return render(request, template, context)
+
+
+def create_post(request):
+    template = 'blog/create_post.html'
+    category = get_object_or_404(Category, is_published=True)
+    return render(request, template, {'category': category})
+
+
+def edit_post(request, id):
+    template = 'blog/edit_post.html'
+    return render(request, template, {'post': get_object_or_404(Post, pk=id)})
+
+
+def delete_post(request, id):
+    template = 'blog/delete_post.html'
+    return render(request, template, {'post': get_object_or_404(Post, pk=id)})
+
+
+def profile(request, id):
+    template = 'blog/profile.html'
+    post = get_object_or_404(Post, pk=id)
+    context = {'post': post}
+    return render(request, template, context)
