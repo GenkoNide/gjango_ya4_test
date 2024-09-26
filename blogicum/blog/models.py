@@ -1,10 +1,10 @@
-from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import models
 
-
 from .constants import MAX_LEN_LINE
-from .core.models import PublishedModel
+from core.models import PublishedModel
+
+User = get_user_model()
 
 
 class Location(PublishedModel):
@@ -54,22 +54,32 @@ class Post(PublishedModel):
                                               'дату и время в будущем — '
                                               'можно делать '
                                               'отложенные публикации.')
-    author = models.ForeignKey(settings.AUTH_USER_MODEL,
+    author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
                                verbose_name='Автор публикации',
-                               blank=False,)
+                               blank=False,
+                               related_name='posts',
+                               related_query_name='posts')
     location = models.ForeignKey(Location,
                                  max_length=MAX_LEN_LINE,
                                  on_delete=models.SET_NULL,
                                  null=True,
                                  verbose_name='Местоположение',
-                                 blank=True,)
+                                 blank=True,
+                                 related_name='posts',
+                                 related_query_name='posts')
     category = models.ForeignKey(Category,
                                  max_length=MAX_LEN_LINE,
                                  on_delete=models.SET_NULL,
                                  null=True,
                                  verbose_name='Категория',
-                                 blank=False,)
+                                 blank=False,
+                                 related_name='posts',
+                                 related_query_name='posts')
+
+    image = models.ImageField('Фото',
+                              upload_to='post',
+                              blank=True)
 
     class Meta:
         verbose_name = 'публикация'
@@ -78,3 +88,17 @@ class Post(PublishedModel):
 
     def __str__(self):
         return self.title
+
+
+class Comment(PublishedModel):
+    text = models.TextField(verbose_name='Текст',
+                            blank=False)
+    post = models.ForeignKey(Post,
+                             on_delete=models.CASCADE,
+                             related_name='comments', )
+    created_at = models.DateTimeField(auto_now_add=True, )
+    author = models.ForeignKey(User,
+                               on_delete=models.CASCADE, )
+
+    class Meta:
+        ordering = ['created_at']

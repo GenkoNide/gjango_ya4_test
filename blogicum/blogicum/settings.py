@@ -18,14 +18,17 @@ SECRET_KEY = 'django-insecure-6lt(kk1y5ds-v+bxd46cs@tq+ev1rga(4@8bhlketwdmmokmqo
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost'
+]
 
 AUTH_USER_MODEL = 'users.User'
 
 INSTALLED_APPS = [
     'pages.apps.PagesConfig',
     'blog.apps.BlogConfig',
-    'blog.core.apps.CoreConfig',
+    'core.apps.CoreConfig',
     'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,6 +49,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
+
 ROOT_URLCONF = 'blogicum.urls'
 
 TEMPLATES_DIR = BASE_DIR / 'templates'
@@ -65,6 +70,12 @@ TEMPLATES = [
         },
     },
 ]
+
+MEDIA_ROOT = BASE_DIR / 'media'
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 
 WSGI_APPLICATION = 'blogicum.wsgi.application'
 
@@ -89,6 +100,10 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+LOGIN_REDIRECT_URL = 'blog:index'
+
+LOGIN_URL = 'login'
 
 LANGUAGE_CODE = 'ru-RU'
 
